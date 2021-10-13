@@ -1,6 +1,8 @@
+import pickle
 import sys
 
-from PyQt5.QtCore import QEvent
+from PyQt5.QtCore import QUrl
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMenu, QVBoxLayout
 
 sys.path.insert(1, 'C:/Users/l1nt3x/PycharmProjects/compilation-of-python-libs-docs/ui')
@@ -13,30 +15,46 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
+        with open('data.pickle', 'rb') as f:
+            self.libsData = pickle.load(f)
+
         self.setFixedSize(self.size())
 
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.listWidget.addItems(('Python', 'PyQt5', 'Random'))
+        self.listWidget.addItems(list(self.libsData.keys()))
         self.listWidget.installEventFilter(self)
         layout.addWidget(self.listWidget)
 
-    def eventFilter(self, source, event):
-        if event.type() == QEvent.ContextMenu and source is self.listWidget:
-            if source.itemAt(event.pos()) != None:
-                menu = QMenu()
-                menu.addAction('Open')
-                # TODO: сделать открытие в WebView
-                menu.addAction('Delete')
-                # TODO: сделать new для самого виджета
-                # TODO: исправить баги
-                if menu.exec_(event.globalPos()):
-                    item = source.itemAt(event.pos())
-                    print(item.text())
-                return True
-            return super().eventFilter(source, event)
-        return 0
+    def contextMenuEvent(self, event):
+        contextMenu = QMenu(self)
+        deleteAct = ''
+        openAct = ''
+        newAct = ''
+        check = 'xd'
+        if ''.join([item.text() for item in self.listWidget.selectedItems()]) == '':
+            newAct = contextMenu.addAction("New")
+            check = 'new'
+        else:
+            openAct = contextMenu.addAction("Open")
+            deleteAct = contextMenu.addAction("Delete")
+            check = 'opedel'
+        action = contextMenu.exec_(self.mapToGlobal(event.pos()))
+        if check == 'opedel':
+            tmp = [item.text() for item in self.listWidget.selectedItems()]
+            if action == deleteAct:
+                self.listWidget.clear()
+                del self.libsData[tmp[0]]
+                self.listWidget.addItems(list(self.libsData.keys()))
+                with open('data.pickle', 'wb') as f:
+                    pickle.dump(self.libsData, f)
+            elif action == openAct:
+                web = QWebEngineView()
+                web.Load(QUrl(self.libsData[tmp[0]]))
+                # web.setWindowTitle(self.libsData[tmp[0]])
+                web.show()
+        self.listWidget.clearSelection()
 
 
 if __name__ == '__main__':
@@ -44,56 +62,3 @@ if __name__ == '__main__':
     ex = MainWindow()
     ex.show()
     sys.exit(app.exec_())
-
-# import sys
-# from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QListWidget, QVBoxLayout
-# from PyQt5.QtCore import QEvent, Qt
-#
-#
-# class MyApp(QWidget):
-#     def __init__(self):
-#         super().__init__()
-#         self.setWindowTitle('Insert Context Menu to ListWidget')
-#         self.window_width, self.window_height = 800, 600
-#         self.setMinimumSize(self.window_width, self.window_height)
-#
-#         layout = QVBoxLayout()
-#         self.setLayout(layout)
-#
-#         self.listWidget = QListWidget()
-#         self.listWidget.addItems(('Facebook', 'Microsoft', 'Google'))
-#         self.listWidget.installEventFilter(self)
-#         layout.addWidget(self.listWidget)
-#
-#     def eventFilter(self, source, event):
-#         if event.type() == QEvent.ContextMenu and source is self.listWidget:
-#             menu = QMenu()
-#             menu.addAction('Action 1')
-#             menu.addAction('Action 2')
-#             menu.addAction('Action 3')
-#
-#             if menu.exec_(event.globalPos()):
-#                 item = source.itemAt(event.pos())
-#                 print(item.text())
-#             return True
-#         return super().eventFilter(source, event)
-#
-#
-# if __name__ == '__main__':
-#     # don't auto scale.
-#     QApplication.setAttribute(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
-#
-#     app = QApplication(sys.argv)
-#     app.setStyleSheet('''
-#         QWidget {
-#             font-size: 30px;
-#         }
-#     ''')
-#
-#     myApp = MyApp()
-#     myApp.show()
-#
-#     try:
-#         sys.exit(app.exec_())
-#     except SystemExit:
-#         print('Closing Window...')
