@@ -24,17 +24,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def eventFilter(self, source, event):
         if event.type() == QEvent.ContextMenu and source is self.listWidget:
-            menu = QMenu()
-            menu.addAction('Open')
-            # TODO: сделать открытие в WebView
-            menu.addAction('Delete')
-            # TODO: сделать new для самого виджета
-            # TODO: исправить баги
-            if menu.exec_(event.globalPos()):
-                item = source.itemAt(event.pos())
-                print(item.text())
-            return True
-        return super().eventFilter(source, event)
+            if source.itemAt(event.pos()) != None:
+                menu = QMenu()
+                menu.addAction('Open')
+                # TODO: сделать открытие в WebView
+                menu.addAction('Delete')
+                # TODO: сделать new для самого виджета
+                # TODO: исправить баги
+                if menu.exec_(event.globalPos()):
+                    item = source.itemAt(event.pos())
+                    print(item.text())
+                return True
+            return super().eventFilter(source, event)
+        return 0
 
 
 if __name__ == '__main__':
