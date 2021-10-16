@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
+    <width>481</width>
     <height>760</height>
    </rect>
   </property>
@@ -23,43 +23,30 @@
    <string>CPLD (Main)</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QListWidget" name="listWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>40</y>
-      <width>480</width>
-      <height>720</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lineEdit">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>451</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="inputMask">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string notr="true"/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>0</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
+      <widget class="QListWidget" name="libraries_List">
+          <property name="geometry">
+              <rect>
+                  <x>3</x>
+                  <y>38</y>
+                  <width>475</width>
+                  <height>720</height>
+              </rect>
+          </property>
+      </widget>
+      <widget class="QLineEdit" name="search_Edit">
+          <property name="geometry">
+              <rect>
+                  <x>3</x>
+                  <y>1</y>
+                  <width>475</width>
+                  <height>30</height>
+              </rect>
+          </property>
+          <property name="inputMask">
+              <string notr="true"/>
     </property>
     <property name="text">
-     <string>🔍</string>
+     <string notr="true"/>
     </property>
    </widget>
   </widget>

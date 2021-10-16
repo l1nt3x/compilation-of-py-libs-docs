@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(480, 760)
+        MainWindow.resize(481, 760)
         font = QtGui.QFont()
         font.setFamily("Georgia")
         font.setPointSize(12)
@@ -22,17 +22,14 @@ class Ui_MainWindow(object):
         MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
-        self.listWidget.setGeometry(QtCore.QRect(0, 40, 480, 720))
-        self.listWidget.setObjectName("listWidget")
-        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit.setGeometry(QtCore.QRect(0, 0, 451, 31))
-        self.lineEdit.setInputMask("")
-        self.lineEdit.setText("")
-        self.lineEdit.setObjectName("lineEdit")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(450, 0, 31, 31))
-        self.pushButton.setObjectName("pushButton")
+        self.libraries_List = QtWidgets.QListWidget(self.centralwidget)
+        self.libraries_List.setGeometry(QtCore.QRect(3, 38, 475, 720))
+        self.libraries_List.setObjectName("libraries_List")
+        self.search_Edit = QtWidgets.QLineEdit(self.centralwidget)
+        self.search_Edit.setGeometry(QtCore.QRect(3, 1, 475, 30))
+        self.search_Edit.setInputMask("")
+        self.search_Edit.setText("")
+        self.search_Edit.setObjectName("search_Edit")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -41,4 +38,3 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "CPLD (Main)"))
-        self.pushButton.setText(_translate("MainWindow", "🔍"))
