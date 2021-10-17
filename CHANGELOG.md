@@ -6,6 +6,6 @@ First version released ~
 
 ### ~~ ver. 1.01 ~~
 
-You can open URL by ENTER key now
-Some bugs fixed
+You can open URL by ENTER key now <br />
+Some bugs fixed <br />
 Created smaller executable
