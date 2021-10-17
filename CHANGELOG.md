@@ -8,3 +8,4 @@ First version released ~
 
 You can open URL by ENTER key now
 Some bugs fixed
+Created smaller executable
