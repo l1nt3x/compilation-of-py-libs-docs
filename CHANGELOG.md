@@ -4,6 +4,6 @@
 
 First version released ~
 
-### ~~ ver. 2 ~~
+### ~~ ver. 1.01 ~~
 
-Nothing happened yet :(
+Bugs fixing
