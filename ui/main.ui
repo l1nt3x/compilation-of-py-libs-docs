@@ -44,11 +44,11 @@
           </property>
           <property name="inputMask">
               <string notr="true"/>
-    </property>
-    <property name="text">
-     <string notr="true"/>
-    </property>
-   </widget>
+          </property>
+          <property name="text">
+              <string notr="true"/>
+          </property>
+      </widget>
   </widget>
  </widget>
  <resources/>

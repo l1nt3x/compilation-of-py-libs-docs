@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>templates</class>
+    <widget class="QWidget" name="templates">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>1200</width>
+                <height>720</height>
+            </rect>
+        </property>
+        <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+            </sizepolicy>
+        </property>
+        <property name="minimumSize">
+            <size>
+                <width>1200</width>
+                <height>720</height>
+            </size>
+        </property>
+        <property name="maximumSize">
+            <size>
+                <width>1200</width>
+                <height>720</height>
+            </size>
+        </property>
+        <property name="font">
+            <font>
+                <family>Georgia</family>
+                <pointsize>12</pointsize>
+            </font>
+        </property>
+        <property name="windowTitle">
+            <string>Templates</string>
+        </property>
+        <widget class="QSplitter" name="splitter">
+            <property name="geometry">
+                <rect>
+                    <x>3</x>
+                    <y>3</y>
+                    <width>1194</width>
+                    <height>714</height>
+                </rect>
+            </property>
+            <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+            </property>
+            <widget class="QListWidget" name="listWidget"/>
+            <widget class="QPlainTextEdit" name="plainTextEdit"/>
+        </widget>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

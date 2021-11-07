@@ -1,29 +1,29 @@
 # Importing libraries
 from pickle import load, dump  # Saving and loading data
 from sys import argv, exit  # App execution
-from webbrowser import open as open_URL  # Opening libs' urls
 
 # App developing
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtWidgets import QMainWindow, QApplication, QMenu, QVBoxLayout, QInputDialog, QDialog, \
-    QPushButton, QLabel, QShortcut
-from url_normalize import url_normalize as url_fix  # URL normalizing
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMenu, QVBoxLayout, QInputDialog, QShortcut
 
+# Another windows
+from lib import libWindow
 from mainui import Ui_MainWindow  # App's UI
 
 
 # MainWindow class
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
+        self.w = None  # No external window yet.
         super().__init__()
         self.setupUi(self)
 
         # Setting a window icon
-        self.setWindowIcon(QIcon("icon.ico"))
+        self.setWindowIcon(QIcon("../icon.ico"))
 
         # Reading libraries from data base
-        with open('data.pickle', 'rb') as f:
+        with open('../compilation-of-python-libs-docs/data.pickle', 'rb') as f:
             self.libsData = dict(sorted(load(f).items()))
 
         self.libraries_List.itemDoubleClicked.connect(self.open_lib)
@@ -47,25 +47,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def open_lib(self):
         # Getting an item name that was right clicked
-        selected_item = [item.text() for item in self.libraries_List.selectedItems()]
+        selected_item = ''.join([item.text() for item in self.libraries_List.selectedItems()])
         if not selected_item:
             return 11
-
-        # If selected lib hasn't URL
-        if self.libsData[selected_item[0]] == 'No URL':
-            # Declaring dialog
-            dlg = QDialog()
-            dlg.setFixedSize(160, 70)
-            b1 = QPushButton("OK", dlg)
-            b1.move(40, 40)
-            b1.clicked.connect(dlg.close)
-            l1 = QLabel('Please change URL for this lib', dlg)
-            l1.move(10, 10)
-            dlg.setWindowTitle("No URL")
-            dlg.setWindowModality(Qt.ApplicationModal)
-            dlg.exec_()
+        if self.w is None:
+            self.w = libWindow(form_name=selected_item)
         else:
-            open_URL(self.libsData[selected_item[0]])  # Opening URL
+            self.w = libWindow(form_name=selected_item)
+        self.w.show()
+        self.libraries_List.clearSelection()
 
     # Creating context menu
     def contextMenuEvent(self, event):
@@ -76,7 +66,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         deleteAct = ''
         openAct = ''
         editAct = ''
-        changeURLAct = ''
         newAct = ''
 
         # Getting an item name that was right clicked
@@ -92,7 +81,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             openAct = contextMenu.addAction("Open")  # Open entry
             deleteAct = contextMenu.addAction("Delete")  # Delete entry
             editAct = contextMenu.addAction('Edit')  # Edit entry's name
-            changeURLAct = contextMenu.addAction('Change lib URL')  # Edit entry's URL
 
             check = 'opedel'  # self.libraries_List item was right clicked
 
@@ -108,50 +96,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # Showing data in self.libraries_List
                 self.libraries_List.addItems(list(self.libsData.keys()))
                 # Updating data
-                with open('data.pickle', 'wb') as f:
-                    dump(dict(sorted(self.libsData.items())), f)
+                with open('../compilation-of-python-libs-docs/data.pickle', 'wb') as f:
+                    dump(dict(self.libsData.items()), f)
             # If open action was chosen
             elif action == openAct:
-                # If an item hasn't an URL
-                if self.libsData[selected_item[0]] == 'No URL':
-                    # Declaring dialog
-                    dlg = QDialog()
-                    dlg.setFixedSize(160, 70)
-                    b1 = QPushButton("OK", dlg)
-                    b1.move(40, 40)
-                    b1.clicked.connect(dlg.close)
-                    l1 = QLabel('Please change URL for this lib', dlg)
-                    l1.move(10, 10)
-                    dlg.setWindowTitle("No URL")
-                    dlg.setWindowModality(Qt.ApplicationModal)
-                    dlg.exec_()
-                else:
-                    open_URL(self.libsData[selected_item[0]])  # Opening URL
-            # If open action was chosen
-            elif action == changeURLAct:
-                # Change URL dialog
-                edit_URL, ok_pressed = QInputDialog.getText(self, "Change URL", "Input lib URL:")
-                if ok_pressed:
-                    if edit_URL != '':
-                        self.libsData[selected_item[0]] = url_fix(edit_URL)  # Assigning new URL
-                    else:
-                        self.libsData[selected_item[0]] = 'No URL'  # Assigning new URL
-                    # Updating data
-                    with open('data.pickle', 'wb') as f:
-                        dump(dict(sorted(self.libsData.items())), f)
+                self.open_lib()
             # If edit action was chosen
             elif action == editAct:
                 # Edit entry dialog
                 edit_entry, ok_pressed = QInputDialog.getText(self, "Edit entry",
                                                               "Input new lib name:")
                 if ok_pressed:
-                    del self.libsData[selected_item[0]]  # Deleting an old entry
-                    self.libsData[edit_entry] = 'No URL'  # Creating a new entry
+                    old_temp = self.libsData[''.join(selected_item)]
+                    del self.libsData[''.join(selected_item)]  # Deleting an old entry
+                    self.libsData[edit_entry] = old_temp  # Creating a new entry
                     self.libraries_List.clear()  # Clearing self.libraries_List widget
                     # Showing data in self.libraries_List
                     self.libraries_List.addItems(list(self.libsData.keys()))
                     # Updating data
-                    with open('data.pickle', 'wb') as f:
+                    with open('../compilation-of-python-libs-docs/data.pickle', 'wb') as f:
                         dump(dict(sorted(self.libsData.items())), f)
         # If self.libraries_List item was right clicked
         elif check == 'new':
@@ -160,20 +123,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # New entry dialog
                 new_entry, ok_pressed = QInputDialog.getText(self, "New entry", "Input lib name:")
                 if ok_pressed:
-                    # Entry's URL dialog
-                    URL, ok_pressed = QInputDialog.getText(self, "Change URL", "Input lib URL:")
-                    if ok_pressed:
-                        if URL != '':
-                            self.libsData[new_entry] = url_fix(URL)  # Assigning new URL
-                        else:
-                            self.libsData[new_entry] = 'No URL'  # Assigning new URL
-
-                    else:
-                        self.libsData[new_entry] = 'No URL'
+                    self.libsData[new_entry] = {
+                        'Link': None,
+                        'Description': None,
+                        'Templates': None
+                    }
                     self.libraries_List.clear()
                     self.libraries_List.addItems(list(self.libsData.keys()))
                     # Updating data
-                    with open('data.pickle', 'wb') as f:
+                    with open('../compilation-of-python-libs-docs/data.pickle', 'wb') as f:
                         dump(dict(sorted(self.libsData.items())), f)
         # Clearing listWidget selection
         self.libraries_List.clearSelection()
@@ -189,7 +147,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 tmp2.append(item)
         self.libraries_List.clear()
         self.libraries_List.addItems(tmp2)
-
 
 # Executing app
 if __name__ == '__main__':
