@@ -1,4 +1,5 @@
 # Importing libraries
+from copy import deepcopy
 from pickle import load, dump  # Saving and loading data
 from sys import argv, exit  # App execution
 
@@ -139,7 +140,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Search function
     def search_update(self):
         text = self.search_Edit.text()
-        tmp = self.libsData.copy()
+        tmp = deepcopy(self.libsData)
         tmp2 = []
         # Showing only suitable items in listWidget
         for item in tmp:
