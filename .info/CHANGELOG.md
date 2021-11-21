@@ -27,3 +27,9 @@ Save button added (Templates window) <br />
 ### ~~ ver. 1.65 ~~
 
 Bugs fixed
+
+### ~~ ver. 2 alpha~~
+
+Changed the way keeping data to SQL database <br />
+'Save' button (Templates) is disabled for some time <br />
+Bugs fixed

@@ -1,38 +1,55 @@
 # Importing libraries
 
-from pickle import load, dump  # Saving and loading data
-
 from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QWidget
 from url_normalize import url_normalize as url_fix
 
+from dbuse import LOAD_DB_TO_DICT, DUMP_FROM_DICT_TO_DB  # Saving and loading data
 from libui import *
 from templates import templatesWindow
 
 
 class libWindow(QWidget, Ui_lib):
-    def __init__(self, form_name='libName'):
-        self.form_name = form_name
-        self.t = None
-        self.lib = form_name
-        with open('../compilation-of-python-libs-docs/data.pickle', 'rb') as f:
-            self.libsData = dict(sorted(load(f).items()))
-        self.libData = self.libsData[self.lib]
+    def __init__(self, lib_id=1, form_name='libName'):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle(form_name)
-        self.listWidget.addItems(list(self.libData.keys())[:-1])
-        self.listWidget.clicked.connect(self.open_item)
-        self.pushButton_2.clicked.connect(self.open_templates)
-        self.pushButton.clicked.connect(self.save_item)
-        self.setWindowIcon(QIcon("../icon.ico"))
+
+        # Reading libraries from data base
+        self.libsData = LOAD_DB_TO_DICT('../compilation-of-python-libs-docs/DATA.db')
+        self.form_name = form_name[0]
+        self.lib_id = lib_id
+        self.libData = self.libsData[self.lib_id]
+
+        self.t = None
+
+        # Setting the window preferences
+        self.setWindowTitle(self.form_name)
+
+        self.setWindowIcon(QIcon("../compilation-of-python-libs-docs/icon.png"))
+
         self.setFixedSize(760, 470)
 
+        self.listWidget.addItems(list(self.libData.keys())[1:-1])
+        self.listWidget.clicked.connect(self.open_item)
+        # print(self.listWidget.items())
+        self.listWidget.setCurrentRow(0)
+        self.open_item()
+        self.listWidget.setCurrentRow(0)
+        self.pushButton_2.clicked.connect(self.open_templates)
+        self.pushButton.clicked.connect(self.save_item)
+
     def open_templates(self):
+        idd = None
+        for lib in list(self.libsData.keys()):
+            if str(self.libsData[lib]['Name']) == str(self.form_name):
+                idd = lib
+                break
         if self.t is None:
-            self.t = templatesWindow(form_name=self.form_name)
+            print(2)
+            self.t = templatesWindow(lib_id=idd, form_name=self.form_name)
+            print(21)
         else:
-            self.t = templatesWindow(form_name=self.form_name)
+            self.t = templatesWindow(lib_id=idd, form_name=self.form_name)
         self.t.show()
 
     def open_item(self):
@@ -64,6 +81,7 @@ class libWindow(QWidget, Ui_lib):
         if item == 'Link' and not changed:
             changed = url_fix(changed)
         self.libData[item] = changed
-        self.libsData[self.lib] = self.libData
-        with open('../compilation-of-python-libs-docs/data.pickle', 'wb') as f:
-            dump(dict(sorted(self.libsData.items())), f)
+        self.libsData[self.lib_id] = self.libData
+
+        # Updating data
+        DUMP_FROM_DICT_TO_DB(self.libsData)
